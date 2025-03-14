@@ -9,6 +9,8 @@ make
 sudo make install
 ```
 
+Note that this compilation depends on go. The current development version can be seen in `go.mod`.
+
 ## Usage
 
 * Server mode:
