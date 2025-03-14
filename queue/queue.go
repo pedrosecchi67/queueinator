@@ -187,20 +187,30 @@ func (qu *Queue) NextJob(period float32) string {
 }
 
 // Remove job from queue
-func (qu *Queue) RemoveJob(job_folder string) {
+func (qu *Queue) RemoveJob(job_folder string, kill_warn bool) {
 	qu.mutex.Lock()
 	defer qu.mutex.Unlock()
 
 	for i, job := range qu.jobs {
 		if job.Folder == job_folder {
+			if kill_warn {
+				slog.Warn("Killing job " + job_folder + " due to timeout")
+			}
+
 			qu.jobs = append(qu.jobs[:i], qu.jobs[(i+1):]...)
+
+			err := os.RemoveAll(job_folder) // delete folders here
+			if err != nil {
+				slog.Warn(fmt.Sprintf("unable to delete folder %s: error %v", job_folder, err))
+			}
+
 			return
 		}
 	}
 }
 
 // Run job
-func (qu *Queue) RunJob(command string, job_folder string) {
+func (qu *Queue) RunJob(command string, job_folder string, expiration float32) {
 	// define launcher between OSs
 	launcher := "bash"
 	flag := "-c"
@@ -240,4 +250,11 @@ func (qu *Queue) RunJob(command string, job_folder string) {
 
 	fmt.Println(time.Now().UTC(), ": Finishing job "+job_folder)
 	qu.SetStatus(job_folder, "done")
+
+	// launch goroutine to remove job after the established expiration time
+	go func() {
+		time.Sleep(time.Duration(expiration) * time.Second)
+
+		qu.RemoveJob(job_folder, true)
+	}()
 }

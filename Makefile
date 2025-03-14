@@ -6,6 +6,13 @@ TEST_SCPT=test.sh
 
 BIN=$(shell dirname $$(which ls))
 
+.PHONY: compile
+all: compile
+
+.PHONY: clean
+clean:
+	rm $(TARGET)
+
 compile:
 	$(CC) $(TARGET)
 
@@ -22,6 +29,4 @@ uninstall:
 .PHONY: test
 test:
 	cd $(TEST); bash $(TEST_SCPT); cd ..
-
-all: compile
 

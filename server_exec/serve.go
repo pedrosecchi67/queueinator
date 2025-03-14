@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"net"
-	"os"
 	"queueinator/folder_handler"
 	"queueinator/queue"
 	"strings"
@@ -56,8 +55,7 @@ func MessageExecute(message []byte, qu *queue.Queue, conn net.Conn, buffer_size 
 		conn.Write(message)
 
 		// remove job from queue and delete temp file
-		qu.RemoveJob(string(job_folder))
-		os.RemoveAll(string(job_folder))
+		qu.RemoveJob(string(job_folder), false)
 	} else {
 		slog.Warn(
 			fmt.Sprintf(

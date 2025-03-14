@@ -155,7 +155,7 @@ func main() {
 				job := qu.NextJob(period)
 				fmt.Println(time.Now().UTC(), ": Running "+job)
 
-				go qu.RunJob(command, job)
+				go qu.RunJob(command, job, expire_time)
 			}
 		}()
 
