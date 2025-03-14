@@ -24,6 +24,13 @@ Up to `NPROCS` processes are ran in parallel (def. 1).
 Incoming data must be constrained to `BUFFER_SIZE` Mb (def. 10).
 The job expires and is deleted if the client does not fetch the resulting data after `EXPIRE_TIME` seconds (def. 3600.0).
 
+Example:
+
+```bash
+# If you really wanna print hello into an empty file for some reason:
+queueinator serve 'echo hello > hello.txt' 8080
+```
+
 * Cleanup mode:
 
 ```bash
@@ -41,5 +48,12 @@ queueinator run IP PORT [-t CHECK_PERIOD] [-b BUFFER_SIZE]
 Sends contents of current folder to server at `IP:PORT` with data limit of `BUFFER_SIZE` Mb.
 Checks for process conclusion/fetches results once every `CHECK_PERIOD` seconds.
 Exits when the process has been executed at the server.
+
+Example:
+
+```bash
+queueinator run localhost 8080
+cat hello.txt # yields hello
+```
 
 
